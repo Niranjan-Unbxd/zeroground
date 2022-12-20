@@ -1,7 +1,7 @@
 package physics
 
 import (
-	"zeroground/colors"
+	"zeroground/pkg/colors"
 
 	"github.com/veandco/go-sdl2/sdl"
 )

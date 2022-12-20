@@ -2,7 +2,7 @@ package objects
 
 import (
 	"math/rand"
-	"zeroground/ui"
+	"zeroground/pkg/ui"
 
 	"github.com/veandco/go-sdl2/sdl"
 )

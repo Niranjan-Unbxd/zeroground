@@ -1,11 +1,11 @@
 package gamestates
 
 import (
-	"fmt"
-	"zeroground/colors"
-	"zeroground/objects"
-	"zeroground/physics"
+	"zeroground/internal/objects"
+
+	"zeroground/pkg/colors"
 	"zeroground/pkg/game"
+	"zeroground/pkg/physics"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -38,32 +38,37 @@ func (g *inGame) Handle(event sdl.Event) {
 	g.player.Handle(event)
 }
 
-func (g *inGame) Update() string {
-	g.player.Update()
-	g.foods.Update()
-	g.tower.Update()
-	g.spawner.Update()
-
+func (g *inGame) isGameOver() bool {
 	food := g.foods.IntersectingFood(g.player)
 	if food != nil {
 		g.player.Eat(food)
 	}
 
 	if physics.HasIntersection(g.player, g.tower) {
-		// g.player.Reset()
-		// g.tower.Reset()
-		fmt.Println("plater hits tower")
-		return "gameover"
+		// fmt.Println("plater hits tower")
+		return true
 	}
 
 	if physics.HasIntersection(g.player, g.spawner) {
-		// g.player.Reset()
-		// g.spawner.Reset()
-		fmt.Println("plater hits spawner")
-		return "gameover"
+		// fmt.Println("plater hits spawner")
+		return true
+	}
+	return false
+}
+
+func (g *inGame) Update() string {
+	nextState := ""
+
+	g.player.Update()
+	g.foods.Update()
+	g.tower.Update()
+	g.spawner.Update()
+
+	if g.isGameOver() {
+		nextState = "gameover"
 	}
 
-	return ""
+	return nextState
 }
 
 func (g *inGame) Render(r *sdl.Renderer) {

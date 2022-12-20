@@ -3,8 +3,8 @@ package game
 import (
 	"fmt"
 	"os"
-	"zeroground/colors"
-	"zeroground/ui"
+	"zeroground/pkg/colors"
+	"zeroground/pkg/ui"
 
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
@@ -25,8 +25,6 @@ type Game struct {
 	font     *ttf.Font
 	renderer *sdl.Renderer
 	window   *sdl.Window
-
-	event *sdl.Event
 
 	state State // current game state
 
@@ -197,7 +195,6 @@ func NewGame(opts ...GameOption) (*Game, error) {
 	g := &Game{
 		window:    w,
 		renderer:  r,
-		event:     nil,
 		frameRate: 60,
 		running:   true,
 		stateMap:  make(map[string]StateFunc),

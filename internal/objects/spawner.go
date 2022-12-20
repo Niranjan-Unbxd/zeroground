@@ -2,9 +2,9 @@ package objects
 
 import (
 	"math/rand"
-	"zeroground/colors"
-	"zeroground/physics"
-	"zeroground/ui"
+	"zeroground/pkg/colors"
+	"zeroground/pkg/physics"
+	"zeroground/pkg/ui"
 
 	"github.com/veandco/go-sdl2/sdl"
 )

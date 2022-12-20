@@ -1,7 +1,7 @@
 package objects
 
 import (
-	"zeroground/colors"
+	"zeroground/pkg/colors"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -83,27 +83,6 @@ func (p *player) Update() {
 		p.lastUpdate = sdl.GetTicks64()
 	}
 }
-
-// func (p *Player) IsAlive() bool {
-// 	return p.snake.IsAlive()
-// }
-
-// func (p *Player) Move() {
-// 	p.snake.Move()
-// }
-
-// func (p *Player) SetAlive(a bool) {
-// 	p.snake.SetAlive(a)
-// }
-
-// func (p *Player) Reset() {
-// 	fmt.Println("Snake Reset")
-// 	p.Snake.Reset()
-// }
-
-// func (p *Player) SetDirection(dir Direction) {
-// 	p.snake.SetDirection(dir)
-// }
 
 func (s *player) Draw(renderer *sdl.Renderer) {
 	for i, part := range s.Hitbox() {

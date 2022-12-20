@@ -1,8 +1,8 @@
 package objects
 
 import (
-	"zeroground/physics"
-	"zeroground/ui"
+	"zeroground/pkg/physics"
+	"zeroground/pkg/ui"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -108,9 +108,9 @@ func (s *snake) IsAlive() bool {
 	return s.Alive
 }
 
-func (s *snake) SetAlive(a bool) {
-	s.Alive = a
-}
+// func (s *snake) SetAlive(a bool) {
+// 	s.Alive = a
+// }
 
 func (s *snake) direction() Direction {
 	return s.body[0].dir

@@ -1,9 +1,9 @@
 package gamestates
 
 import (
-	"zeroground/colors"
+	"zeroground/pkg/colors"
 	"zeroground/pkg/game"
-	"zeroground/ui"
+	"zeroground/pkg/ui"
 
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"

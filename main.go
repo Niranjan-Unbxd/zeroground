@@ -1,7 +1,7 @@
 package main
 
 import (
-	"zeroground/gamestates"
+	"zeroground/internal/gamestates"
 	"zeroground/pkg/game"
 )
 
