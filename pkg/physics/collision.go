@@ -11,7 +11,8 @@ type Plane2D struct {
 }
 
 func (p Plane2D) Draw(r *sdl.Renderer) {
-	r.SetDrawColor(colors.RGBA(colors.White()))
+	r.SetDrawColor(colors.RGBA(colors.New(148, 210, 189)))
+	// r.SetDrawColor(0, 18, 25, 0)
 	r.DrawRect(&p.Rect)
 }
 

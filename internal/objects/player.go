@@ -1,19 +1,17 @@
 package objects
 
 import (
-	"zeroground/pkg/colors"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-var size = int32(16)
-var snakeBaseSpeed = uint64(100)
-var snakeAccSpeed = uint64(50)
+const size = int32(16)
+
+var playerMaxSpeed = uint64(50)
 
 type player struct {
-	snake
-	AccOn      bool
-	lastUpdate uint64
+	*snake
+	texture *sdl.Texture
+	AccOn   bool
 }
 
 // func (p *Player) Position() sdl.Point {
@@ -76,34 +74,43 @@ func (p *player) Eat(food Food) {
 func (p *player) Update() {
 	speed := snakeBaseSpeed
 	if p.AccOn {
-		speed = snakeAccSpeed
+		speed = playerMaxSpeed
 	}
 	if sdl.GetTicks64()-p.lastUpdate > speed {
-		p.snake.Update()
+		p.snake.move()
 		p.lastUpdate = sdl.GetTicks64()
 	}
 }
 
-func (s *player) Draw(renderer *sdl.Renderer) {
+func (s *player) Draw(r *sdl.Renderer) {
 	for i, part := range s.Hitbox() {
+		rect := part.BoundingRect()
 		if i == 0 {
-			renderer.SetDrawColor(colors.RGBA(colors.White()))
+			id := int32(s.direction() - 1)
+			src := &sdl.Rect{X: id * size, Y: 0, W: size, H: size}
+			r.Copy(s.texture, src, rect)
+			// r.SetDrawColor(0, 95, 115, 0)
 		} else {
-			renderer.SetDrawColor(s.color.R, s.color.G, s.color.B, sdl.ALPHA_TRANSPARENT)
+			r.SetDrawColor(s.color.R, s.color.G, s.color.B, sdl.ALPHA_TRANSPARENT)
+			r.FillRect(rect)
+			r.SetDrawColor(148, 210, 189, 0)
+			r.DrawRect(rect)
 		}
-		renderer.FillRect(part.BoundingRect())
-		part.Draw(renderer)
 		// f := part.Rect
 		// f.H = 0
 		// f == part.Rect ?? what do u think
 	}
 }
 
-func NewPlayer(start sdl.Point, color sdl.Color) Player {
+func NewPlayer(start sdl.Point, color sdl.Color, tex *sdl.Texture) Player {
+	// snap to grid
+	start.X = start.X - (start.X % size)
+	start.Y = start.Y - (start.Y % size)
+
 	p := &player{
-		snake:      simpleSnake(start, color, 3, size),
-		AccOn:      false,
-		lastUpdate: sdl.GetTicks64(),
+		texture: tex,
+		snake:   simpleSnake(start, color, 3, size),
+		AccOn:   false,
 	}
 	return p
 }

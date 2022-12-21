@@ -21,6 +21,7 @@ type Snake interface {
 	objects.Object
 	Hitbox() []physics.Plane2D
 	SetDirection(dir Direction)
+	HasIntersection(...*sdl.Rect) (int, bool)
 	IsAlive() bool
 }
 

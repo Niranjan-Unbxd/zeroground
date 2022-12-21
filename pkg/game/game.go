@@ -108,7 +108,7 @@ func (g *Game) Run() {
 			g.SetState(next)
 		}
 
-		g.renderer.SetDrawColor(0, 0, 0, 0)
+		g.renderer.SetDrawColor(0, 18, 25, 0)
 		g.state.Render(g.renderer)
 
 		if g.debug {

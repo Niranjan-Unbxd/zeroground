@@ -105,19 +105,16 @@ func (t *Tower) Update() {
 
 func (t *Tower) Draw(renderer *sdl.Renderer) {
 	rects := t.Rect()
-	white := colors.White()
-	dark := colors.Darker(t.Color)
-	// turret
-	renderer.SetDrawColor(colors.RGBA(dark))
-	renderer.FillRect(&rects[0])
-	// border
-	// w := colors.White()
-	// w.
-	renderer.SetDrawColor(colors.RGBA(white))
-	renderer.DrawRect(&rects[0])
-	// fire
+
 	renderer.SetDrawColor(colors.RGBA(t.Color))
+	renderer.FillRect(&rects[0])
 	renderer.FillRect(&rects[1])
+
+	// outlines
+	outlinec := colors.New(0, 18, 25)
+	renderer.SetDrawColor(colors.RGBA(outlinec))
+	renderer.DrawRect(&rects[0])
+	renderer.DrawRect(&rects[1])
 }
 
 func (t *Tower) Reset() {

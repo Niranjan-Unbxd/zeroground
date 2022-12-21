@@ -19,7 +19,7 @@ type Spawner struct {
 	Pos   sdl.Point
 	Color sdl.Color
 
-	snake     Snake
+	snake     *snake
 	createdAt uint64
 }
 
@@ -68,38 +68,45 @@ func (s *Spawner) Hitbox() []physics.Plane2D {
 // }
 
 func (s *Spawner) Update() {
-	choice := Direction(rand.Int31n(4) + 1)
-	s.snake.SetDirection(choice)
-	s.snake.Update()
+	if !s.snake.IsAlive() {
+		s.snake.Reset()
+	}
+
+	speed := snakeBaseSpeed
+	if sdl.GetTicks64()-s.snake.lastUpdate > speed {
+		// try to change direction
+		choice := Direction(rand.Int31n(4) + 1)
+		s.snake.SetDirection(choice)
+		// move spawned snake
+		s.snake.move()
+		s.snake.lastUpdate = sdl.GetTicks64()
+	}
 }
 
-func (s *Spawner) Draw(renderer *sdl.Renderer) {
+func (s *Spawner) Draw(r *sdl.Renderer) {
 	rects := s.Hitbox()
 	dark := colors.Darker(s.Color)
 	// outside
-	renderer.SetDrawColor(colors.RGBA(dark))
-	renderer.FillRect(rects[0].BoundingRect())
+	r.SetDrawColor(colors.RGBA(dark))
+	r.FillRect(rects[0].BoundingRect())
 	// inside
-	r2 := &sdl.Rect{
-		X: s.Pos.X - spawnerSnakeSize/2,
-		Y: s.Pos.Y - spawnerSnakeSize/2,
-		W: spawnerSnakeSize,
-		H: spawnerSnakeSize,
-	}
-	renderer.SetDrawColor(colors.RGBA(s.Color))
-	renderer.FillRect(r2)
-	// inside border
-	renderer.SetDrawColor(colors.RGBA(colors.Black()))
-	renderer.DrawRect(r2)
+	// r2 := &sdl.Rect{
+	// 	X: s.Pos.X - spawnerSnakeSize/2,
+	// 	Y: s.Pos.Y - spawnerSnakeSize/2,
+	// 	W: spawnerSnakeSize,
+	// 	H: spawnerSnakeSize,
+	// }
+	// r.SetDrawColor(202, 103, 2, 0)
+	// r.FillRect(r2)
 
-	s.snake.Draw(renderer)
+	s.snake.Draw(r)
 }
 
 func (s *Spawner) Reset() {
 	x := rand.Int31() % (ui.WindowWidth - 2*spawnerSize)
 	y := rand.Int31() % (ui.WindowHeight - 2*spawnerSize)
 	s.Pos = sdl.Point{X: x, Y: y}
-	s.snake = NewSnake(s.Pos, colors.Red(), 5, 8)
+	s.snake = simpleSnake(s.Pos, s.Color, 5, 8)
 	s.createdAt = sdl.GetTicks64()
 }
 

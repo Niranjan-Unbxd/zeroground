@@ -7,10 +7,9 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// type State struct {
-// 	Setup func()
-// 	Clear func()
-// }
+const (
+	snakeBaseSpeed = uint64(100)
+)
 
 type snakeSegment struct {
 	pos sdl.Point
@@ -28,6 +27,8 @@ type snake struct {
 	Alive         bool
 	Size          int32
 	InitialLength int32
+
+	lastUpdate uint64
 
 	// currState *State
 	// states    map[string]*State
@@ -49,24 +50,37 @@ func (s *snake) Hitbox() []physics.Plane2D {
 	return hbxs
 }
 
-func (s *snake) Draw(renderer *sdl.Renderer) {
+func (s *snake) HasIntersection(rects ...*sdl.Rect) (int, bool) {
+	head := &sdl.Rect{
+		X: s.body[0].pos.X - s.Size/2,
+		Y: s.body[0].pos.Y - s.Size/2,
+		W: s.Size,
+		H: s.Size,
+	}
+	for i, r := range rects {
+		if head.HasIntersection(r) {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func (s *snake) Draw(r *sdl.Renderer) {
 	for _, part := range s.Hitbox() {
-		renderer.SetDrawColor(s.color.R, s.color.G, s.color.B, sdl.ALPHA_TRANSPARENT)
-		renderer.FillRect(part.BoundingRect())
-		part.Draw(renderer)
+		rect := part.BoundingRect()
+		r.SetDrawColor(s.color.R, s.color.G, s.color.B, sdl.ALPHA_TRANSPARENT)
+		r.FillRect(rect)
+		// r.SetDrawColor(0, 18, 25, 0)
+		// r.DrawRect(rect)
+		r.SetDrawColor(238, 155, 0, 0)
+		r.DrawRect(rect)
 		// f := part.Rect
 		// f.H = 0
 		// f == part.Rect ?? what do u think
 	}
 }
 
-func (s *snake) Update() {
-	// this should move out of Update and possible go in game
-	if !s.Alive {
-		s.Reset()
-		return
-	}
-
+func (s *snake) move() {
 	tailPos := s.body[len(s.body)-1].pos
 	for i := len(s.body) - 1; i > 0; i-- {
 		s.body[i].pos = s.body[i-1].pos
@@ -101,6 +115,14 @@ func (s *snake) Update() {
 		if head.pos.X == s.body[i].pos.X && head.pos.Y == s.body[i].pos.Y {
 			s.Alive = false
 		}
+	}
+}
+
+func (s *snake) Update() {
+	speed := snakeBaseSpeed
+	if sdl.GetTicks64()-s.lastUpdate > speed {
+		s.move()
+		s.lastUpdate = sdl.GetTicks64()
 	}
 }
 
@@ -174,8 +196,15 @@ func (s *snake) Reset() {
 // 	s.currState.Setup()
 // }
 
-func simpleSnake(start sdl.Point, color sdl.Color, len, size int32) snake {
-	s := snake{start: start, color: color, Size: size, Alive: true, InitialLength: len}
+func simpleSnake(start sdl.Point, color sdl.Color, len, size int32) *snake {
+	s := &snake{
+		start:         start,
+		color:         color,
+		Size:          size,
+		Alive:         true,
+		InitialLength: len,
+		lastUpdate:    sdl.GetTicks64(),
+	}
 	s.Reset()
 	return s
 }
@@ -188,5 +217,5 @@ func NewSnake(start sdl.Point, color sdl.Color, length, size int32) Snake {
 		length = 3
 	}
 	s := simpleSnake(start, color, length, size)
-	return &s
+	return s
 }

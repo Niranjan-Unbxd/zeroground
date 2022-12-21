@@ -8,7 +8,7 @@ import (
 const FPS = 1000 / 60
 
 func main() {
-	game, err := game.NewGame(
+	example, err := game.NewGame(
 		game.WithDebug(true),
 		game.WithDefaultFont("resources/mechfont.otf", 32),
 	)
@@ -16,11 +16,16 @@ func main() {
 		panic(err)
 	}
 
-	game.RegisterState("mainmenu", gamestates.GameStateMainMenu(game))
-	game.RegisterState("ingame", gamestates.GameStateInGame(game))
-	game.RegisterState("gameover", gamestates.GameStateGameOver(game))
+	rm := game.NewResourceManager(example.Renderer())
+	rm.LoadTexture("block", "resources/block.png")
+	rm.LoadTexture("snake", "resources/snakehead.png")
 
-	game.SetState("mainmenu")
+	example.RegisterState("mainmenu", gamestates.GameStateMainMenu(example))
+	example.RegisterState("ingame", gamestates.GameStateInGame(rm))
+	example.RegisterState("gameover", gamestates.GameStateGameOver(example))
 
-	game.Run()
+	example.SetState("mainmenu")
+	example.Run()
+
+	rm.UnloadAll()
 }

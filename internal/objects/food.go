@@ -21,9 +21,9 @@ const (
 
 var (
 	foodColor = map[freshness]sdl.Color{
-		FoodFresh:  colors.New(0, 127, 0),
-		FoodStale:  colors.New(127, 127, 0),
-		FoodRotten: colors.New(127, 64, 0),
+		FoodFresh:  colors.New(10, 147, 150),
+		FoodStale:  colors.New(238, 155, 0),
+		FoodRotten: colors.New(187, 62, 3),
 	}
 
 	foodTiming = map[freshness]uint64{
@@ -92,6 +92,8 @@ func (f *food) Draw(renderer *sdl.Renderer) {
 	}
 	renderer.SetDrawColor(colors.RGBA(foodColor[f.state]))
 	renderer.FillRect(&f.Rect()[0])
+	renderer.SetDrawColor(233, 216, 166, 0)
+	renderer.DrawRect(&f.Rect()[0])
 }
 
 func (f *food) Reset() {
@@ -187,7 +189,7 @@ func (f *FoodSpawner) Reset() {
 	f.spawnFood()
 }
 
-func (fs *FoodSpawner) IntersectingFood(p physics.PhysicsObject2D) Food {
+func (fs *FoodSpawner) IntersectingFood(p physics.PhysicsObject2D) *food {
 	at := -1
 	for i, f := range fs.foods {
 		if f.state == FoodInvalid {
